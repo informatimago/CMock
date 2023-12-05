@@ -64,24 +64,24 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
 
   it "add mock function declaration for functions of style 'void func(void)'" do
     function = {:name => "Maple", :args => [], :return => test_return[:void]}
-    expected = "#define Maple_Expect() Maple_CMockExpect(__LINE__)\n" +
-               "void Maple_CMockExpect(UNITY_LINE_TYPE cmock_line);\n"
+    expected = "#define Maple_Expect() Maple_CMockExpect(__FILE__, __LINE__)\n" +
+               "void Maple_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line);\n"
     returned = @cmock_generator_plugin_expect.mock_function_declarations(function)
     assert_equal(expected, returned)
   end
 
   it "add mock function declaration for functions of style 'int func(void)'" do
     function = {:name => "Spruce", :args => [], :return => test_return[:int]}
-    expected = "#define Spruce_ExpectAndReturn(cmock_retval) Spruce_CMockExpectAndReturn(__LINE__, cmock_retval)\n" +
-               "void Spruce_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return);\n"
+    expected = "#define Spruce_ExpectAndReturn(cmock_retval) Spruce_CMockExpectAndReturn(__FILE__, __LINE__, cmock_retval)\n" +
+               "void Spruce_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, int cmock_to_return);\n"
     returned = @cmock_generator_plugin_expect.mock_function_declarations(function)
     assert_equal(expected, returned)
   end
 
   it "add mock function declaration for functions of style 'const char* func(int tofu)'" do
     function = {:name => "Pine", :args => ["int tofu"], :args_string => "int tofu", :args_call => 'tofu', :return => test_return[:string]}
-    expected = "#define Pine_ExpectAndReturn(tofu, cmock_retval) Pine_CMockExpectAndReturn(__LINE__, tofu, cmock_retval)\n" +
-               "void Pine_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, int tofu, const char* cmock_to_return);\n"
+    expected = "#define Pine_ExpectAndReturn(tofu, cmock_retval) Pine_CMockExpectAndReturn(__FILE__, __LINE__, tofu, cmock_retval)\n" +
+               "void Pine_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, int tofu, const char* cmock_to_return);\n"
     returned = @cmock_generator_plugin_expect.mock_function_declarations(function)
     assert_equal(expected, returned)
   end
@@ -115,7 +115,7 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
     function = {:name => "Pear", :args => [], :args_string => "void", :return => test_return[:void]}
     @utils.expect :code_add_base_expectation, "mock_retval_0 ", ["Pear"]
     @utils.expect :code_call_argument_loader, "mock_retval_1 ", [function]
-    expected = ["void Pear_CMockExpect(UNITY_LINE_TYPE cmock_line)\n",
+    expected = ["void Pear_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line)\n",
                 "{\n",
                 "mock_retval_0 ",
                 "mock_retval_1 ",
@@ -130,7 +130,7 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
     @utils.expect :code_add_base_expectation, "mock_retval_0 ", ["Orange"]
     @utils.expect :code_call_argument_loader, "mock_retval_1 ", [function]
     @utils.expect :code_assign_argument_quickly, "mock_retval_2", ["cmock_call_instance->ReturnVal", function[:return]]
-    expected = ["void Orange_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, int cmock_to_return)\n",
+    expected = ["void Orange_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, int cmock_to_return)\n",
                 "{\n",
                 "mock_retval_0 ",
                 "mock_retval_1 ",
@@ -146,7 +146,7 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
     @utils.expect :code_add_base_expectation, "mock_retval_0 ", ["Lemon"]
     @utils.expect :code_call_argument_loader, "mock_retval_1 ", [function]
     @utils.expect :code_assign_argument_quickly, "mock_retval_2", ["cmock_call_instance->ReturnVal", function[:return]]
-    expected = ["void Lemon_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, char* pescado, int cmock_to_return)\n",
+    expected = ["void Lemon_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, char* pescado, int cmock_to_return)\n",
                 "{\n",
                 "mock_retval_0 ",
                 "mock_retval_1 ",
@@ -161,7 +161,7 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
     function = {:name => "Pear", :args => [], :args_string => "void", :return => test_return[:void]}
     @utils.expect :code_add_base_expectation, "mock_retval_0 ", ["Pear"]
     @utils.expect :code_call_argument_loader, "mock_retval_1 ", [function]
-    expected = ["void Pear_CMockExpect(UNITY_LINE_TYPE cmock_line)\n",
+    expected = ["void Pear_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line)\n",
                 "{\n",
                 "mock_retval_0 ",
                 "mock_retval_1 ",
@@ -177,7 +177,7 @@ describe CMockGeneratorPluginExpect, "Verify CMockGeneratorPluginExpect Module W
     expected = "  if (CMOCK_GUTS_NONE != call_instance)\n" \
                "  {\n" \
                "    UNITY_SET_DETAIL(CMockString_Banana);\n" \
-               "    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);\n" \
+               "    UNITY_TEST_FAIL(cmock_file, cmock_line, CMockStringCalledLess);\n" \
                "  }\n"
     returned = @cmock_generator_plugin_expect.mock_verify(function)
     assert_equal(expected, returned)

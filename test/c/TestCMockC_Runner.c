@@ -26,15 +26,15 @@ int main(void)
   Unity.TestFile = "TestCMock.c";
   UnityBegin(Unity.TestFile);
 
-  RUN_TEST(test_MemNewWillReturnNullIfGivenIllegalSizes, 21);
-  RUN_TEST(test_MemShouldProtectAgainstMemoryOverflow, 33);
-  RUN_TEST(test_MemChainWillReturnNullAndDoNothingIfGivenIllegalInformation, 42);
-  RUN_TEST(test_MemNextWillReturnNullIfGivenABadRoot, 56);
-  RUN_TEST(test_ThatWeCanClaimAndChainAFewElementsTogether, 67);
-  RUN_TEST(test_MemEndOfChain, 149);
-  RUN_TEST(test_ThatCMockStopsReturningMoreDataWhenItRunsOutOfMemory, 195);
-  RUN_TEST(test_ThatCMockStopsReturningMoreDataWhenAskForMoreThanItHasLeftEvenIfNotAtExactEnd, 244);
-  RUN_TEST(test_ThatWeCanAskForAllSortsOfSizes, 298);
+  RUN_TEST(test_MemNewWillReturnNullIfGivenIllegalSizes, Unity.TestFile, 21);
+  RUN_TEST(test_MemShouldProtectAgainstMemoryOverflow, Unity.TestFile, 33);
+  RUN_TEST(test_MemChainWillReturnNullAndDoNothingIfGivenIllegalInformation, Unity.TestFile, 42);
+  RUN_TEST(test_MemNextWillReturnNullIfGivenABadRoot, Unity.TestFile, 56);
+  RUN_TEST(test_ThatWeCanClaimAndChainAFewElementsTogether, Unity.TestFile, 67);
+  RUN_TEST(test_MemEndOfChain, Unity.TestFile, 149);
+  RUN_TEST(test_ThatCMockStopsReturningMoreDataWhenItRunsOutOfMemory, Unity.TestFile, 195);
+  RUN_TEST(test_ThatCMockStopsReturningMoreDataWhenAskForMoreThanItHasLeftEvenIfNotAtExactEnd, Unity.TestFile, 244);
+  RUN_TEST(test_ThatWeCanAskForAllSortsOfSizes, Unity.TestFile, 298);
 
   UnityEnd();
   return 0;

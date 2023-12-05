@@ -31,11 +31,11 @@ class CMockGeneratorPluginArray
       m[:ptr?] ? "#{type} #{m[:name]}, int #{m[:name]}_Depth" : "#{type} #{m[:name]}"
     end.join(', ')
     if function[:return][:void?]
-      return "#define #{function[:name]}_ExpectWithArray(#{args_call}) #{function[:name]}_CMockExpectWithArray(__LINE__, #{args_call})\n" \
-             "void #{function[:name]}_CMockExpectWithArray(UNITY_LINE_TYPE cmock_line, #{args_string});\n"
+      return "#define #{function[:name]}_ExpectWithArray(#{args_call}) #{function[:name]}_CMockExpectWithArray(__FILE__, __LINE__, #{args_call})\n" \
+              "void #{function[:name]}_CMockExpectWithArray(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{args_string});\n"
     else
-      return "#define #{function[:name]}_ExpectWithArrayAndReturn(#{args_call}, cmock_retval) #{function[:name]}_CMockExpectWithArrayAndReturn(__LINE__, #{args_call}, cmock_retval)\n" \
-             "void #{function[:name]}_CMockExpectWithArrayAndReturn(UNITY_LINE_TYPE cmock_line, #{args_string}, #{function[:return][:str]});\n"
+      return "#define #{function[:name]}_ExpectWithArrayAndReturn(#{args_call}, cmock_retval) #{function[:name]}_CMockExpectWithArrayAndReturn(__FILE__, __LINE__, #{args_call}, cmock_retval)\n" \
+             "void #{function[:name]}_CMockExpectWithArrayAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{args_string}, #{function[:return][:str]});\n"
     end
   end
 
@@ -50,9 +50,9 @@ class CMockGeneratorPluginArray
     end.join(', ')
     call_string = function[:args].map { |m| m[:ptr?] ? "#{m[:name]}, #{m[:name]}_Depth" : m[:name] }.join(', ')
     lines << if function[:return][:void?]
-               "void #{func_name}_CMockExpectWithArray(UNITY_LINE_TYPE cmock_line, #{args_string})\n"
+               "void #{func_name}_CMockExpectWithArray(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{args_string})\n"
              else
-               "void #{func_name}_CMockExpectWithArrayAndReturn(UNITY_LINE_TYPE cmock_line, #{args_string}, #{function[:return][:str]})\n"
+               "void #{func_name}_CMockExpectWithArrayAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{args_string}, #{function[:return][:str]})\n"
              end
     lines << "{\n"
     lines << @utils.code_add_base_expectation(func_name)

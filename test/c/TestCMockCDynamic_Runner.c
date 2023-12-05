@@ -23,12 +23,12 @@ int main(void)
 {
   UnityBegin("TestCMockDynamic.c");
 
-  RUN_TEST(test_MemNewWillReturnNullIfGivenIllegalSizes, 26);
-  RUN_TEST(test_MemNewWillNowSupportSizesGreaterThanTheDefinesCMockSize, 35);
-  RUN_TEST(test_MemChainWillReturnNullAndDoNothingIfGivenIllegalInformation, 45);
-  RUN_TEST(test_MemNextWillReturnNullIfGivenABadRoot, 59);
-  RUN_TEST(test_ThatWeCanClaimAndChainAFewElementsTogether, 70);
-  RUN_TEST(test_ThatWeCanAskForAllSortsOfSizes, 152);
+  RUN_TEST(test_MemNewWillReturnNullIfGivenIllegalSizes, Unity.TestFile, 26);
+  RUN_TEST(test_MemNewWillNowSupportSizesGreaterThanTheDefinesCMockSize, Unity.TestFile, 35);
+  RUN_TEST(test_MemChainWillReturnNullAndDoNothingIfGivenIllegalInformation, Unity.TestFile, 45);
+  RUN_TEST(test_MemNextWillReturnNullIfGivenABadRoot, Unity.TestFile, 59);
+  RUN_TEST(test_ThatWeCanClaimAndChainAFewElementsTogether, Unity.TestFile, 70);
+  RUN_TEST(test_ThatWeCanAskForAllSortsOfSizes, Unity.TestFile, 152);
 
   UnityEnd();
   CMock_Guts_MemFreeFinal();

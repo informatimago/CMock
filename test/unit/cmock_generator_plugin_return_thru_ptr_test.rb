@@ -108,12 +108,12 @@ describe CMockGeneratorPluginReturnThruPtr, "Verify CMockGeneratorPluginReturnTh
 
     expected =
       "#define Pine_ReturnThruPtr_tofu(tofu)" +
-      " Pine_CMockReturnMemThruPtr_tofu(__LINE__, tofu, sizeof(int))\n" +
+      " Pine_CMockReturnMemThruPtr_tofu(__FILE__, __LINE__, tofu, sizeof(int))\n" +
       "#define Pine_ReturnArrayThruPtr_tofu(tofu, cmock_len)" +
-      " Pine_CMockReturnMemThruPtr_tofu(__LINE__, tofu, cmock_len * sizeof(*tofu))\n" +
+      " Pine_CMockReturnMemThruPtr_tofu(__FILE__, __LINE__, tofu, cmock_len * sizeof(*tofu))\n" +
       "#define Pine_ReturnMemThruPtr_tofu(tofu, cmock_size)" +
-      " Pine_CMockReturnMemThruPtr_tofu(__LINE__, tofu, cmock_size)\n" +
-      "void Pine_CMockReturnMemThruPtr_tofu(UNITY_LINE_TYPE cmock_line, int* tofu, size_t cmock_size);\n"
+      " Pine_CMockReturnMemThruPtr_tofu(__FILE__, __LINE__, tofu, cmock_size)\n" +
+      "void Pine_CMockReturnMemThruPtr_tofu(const char* cmock_file, UNITY_LINE_TYPE cmock_line, int* tofu, size_t cmock_size);\n"
 
     returned = @cmock_generator_plugin_return_thru_ptr.mock_function_declarations(@complex_func)
     assert_equal(expected, returned)
@@ -124,19 +124,19 @@ describe CMockGeneratorPluginReturnThruPtr, "Verify CMockGeneratorPluginReturnTh
 
     expected =
     "#define Spruce_ReturnThruPtr_pork(pork)" +
-    " Spruce_CMockReturnMemThruPtr_pork(__LINE__, pork, sizeof(*pork))\n" +
+    " Spruce_CMockReturnMemThruPtr_pork(__FILE__, __LINE__, pork, sizeof(*pork))\n" +
     "#define Spruce_ReturnArrayThruPtr_pork(pork, cmock_len)" +
-    " Spruce_CMockReturnMemThruPtr_pork(__LINE__, pork, cmock_len * sizeof(*pork))\n" +
+    " Spruce_CMockReturnMemThruPtr_pork(__FILE__, __LINE__, pork, cmock_len * sizeof(*pork))\n" +
     "#define Spruce_ReturnMemThruPtr_pork(pork, cmock_size)" +
-    " Spruce_CMockReturnMemThruPtr_pork(__LINE__, pork, cmock_size)\n" +
-    "void Spruce_CMockReturnMemThruPtr_pork(UNITY_LINE_TYPE cmock_line, void* pork, size_t cmock_size);\n" + 
+    " Spruce_CMockReturnMemThruPtr_pork(__FILE__, __LINE__, pork, cmock_size)\n" +
+    "void Spruce_CMockReturnMemThruPtr_pork(const char* cmock_file, UNITY_LINE_TYPE cmock_line, void* pork, size_t cmock_size);\n" + 
     "#define Spruce_ReturnThruPtr_salad(salad)" +
-    " Spruce_CMockReturnMemThruPtr_salad(__LINE__, salad, sizeof(*salad))\n" +
+    " Spruce_CMockReturnMemThruPtr_salad(__FILE__, __LINE__, salad, sizeof(*salad))\n" +
     "#define Spruce_ReturnArrayThruPtr_salad(salad, cmock_len)" +
-    " Spruce_CMockReturnMemThruPtr_salad(__LINE__, salad, cmock_len * sizeof(*salad))\n" +
+    " Spruce_CMockReturnMemThruPtr_salad(__FILE__, __LINE__, salad, cmock_len * sizeof(*salad))\n" +
     "#define Spruce_ReturnMemThruPtr_salad(salad, cmock_size)" +
-    " Spruce_CMockReturnMemThruPtr_salad(__LINE__, salad, cmock_size)\n" +
-    "void Spruce_CMockReturnMemThruPtr_salad(UNITY_LINE_TYPE cmock_line, MY_FANCY_VOID* salad, size_t cmock_size);\n"
+    " Spruce_CMockReturnMemThruPtr_salad(__FILE__, __LINE__, salad, cmock_size)\n" +
+    "void Spruce_CMockReturnMemThruPtr_salad(const char* cmock_file, UNITY_LINE_TYPE cmock_line, MY_FANCY_VOID* salad, size_t cmock_size);\n"
 
     returned = @cmock_generator_plugin_return_thru_ptr.mock_function_declarations(@void_ptr_func)
     assert_equal(expected, returned)
@@ -146,11 +146,11 @@ describe CMockGeneratorPluginReturnThruPtr, "Verify CMockGeneratorPluginReturnTh
     complex_func_expect();
 
     expected =
-      "void Pine_CMockReturnMemThruPtr_tofu(UNITY_LINE_TYPE cmock_line, int* tofu, size_t cmock_size)\n" +
+      "void Pine_CMockReturnMemThruPtr_tofu(const char* cmock_file, UNITY_LINE_TYPE cmock_line, int* tofu, size_t cmock_size)\n" +
       "{\n" +
       "  CMOCK_Pine_CALL_INSTANCE* cmock_call_instance = " +
       "(CMOCK_Pine_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.Pine_CallInstance));\n" +
-      "  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringPtrPreExp);\n" +
+      "  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_file, cmock_line, CMockStringPtrPreExp);\n" +
       "  cmock_call_instance->ReturnThruPtr_tofu_Used = 1;\n" +
       "  cmock_call_instance->ReturnThruPtr_tofu_Val = tofu;\n" +
       "  cmock_call_instance->ReturnThruPtr_tofu_Size = cmock_size;\n" +
@@ -166,7 +166,7 @@ describe CMockGeneratorPluginReturnThruPtr, "Verify CMockGeneratorPluginReturnTh
     expected =
       "  if (cmock_call_instance->ReturnThruPtr_tofu_Used)\n" +
       "  {\n" +
-      "    UNITY_TEST_ASSERT_NOT_NULL(tofu, cmock_line, CMockStringPtrIsNULL);\n" +
+      "    UNITY_TEST_ASSERT_NOT_NULL(tofu, cmock_file, cmock_line, CMockStringPtrIsNULL);\n" +
       "    CMock_memcpy((void*)tofu, (void*)cmock_call_instance->ReturnThruPtr_tofu_Val,\n" +
       "      cmock_call_instance->ReturnThruPtr_tofu_Size);\n" +
       "  }\n"

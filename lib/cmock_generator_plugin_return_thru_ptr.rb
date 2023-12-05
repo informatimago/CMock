@@ -39,15 +39,15 @@ class CMockGeneratorPluginReturnThruPtr
       # we need to do a sizeof the dereferenced pointer (which could be a problem if give the wrong size
       # however if its a void pointer we are given then we have to use the provided parameter name because sizeof(void) is UB.
       lines << if (arg[:type][-1] == '*') && (void_pointer?(arg[:type][0..-2]) == false)
-                 " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__LINE__, #{arg[:name]}, sizeof(#{arg[:type][0..-2]}))\n"
+                 " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__FILE__, __LINE__, #{arg[:name]}, sizeof(#{arg[:type][0..-2]}))\n"
                else
-                 " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__LINE__, #{arg[:name]}, sizeof(*#{arg[:name]}))\n"
+                 " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__FILE__, __LINE__, #{arg[:name]}, sizeof(*#{arg[:name]}))\n"
                end
       lines << "#define #{function[:name]}_ReturnArrayThruPtr_#{arg[:name]}(#{arg[:name]}, cmock_len)"
-      lines << " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__LINE__, #{arg[:name]}, cmock_len * sizeof(*#{arg[:name]}))\n"
+      lines << " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__FILE__, __LINE__, #{arg[:name]}, cmock_len * sizeof(*#{arg[:name]}))\n"
       lines << "#define #{function[:name]}_ReturnMemThruPtr_#{arg[:name]}(#{arg[:name]}, cmock_size)"
-      lines << " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__LINE__, #{arg[:name]}, cmock_size)\n"
-      lines << "void #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(UNITY_LINE_TYPE cmock_line, #{arg[:type]} #{arg[:name]}, size_t cmock_size);\n"
+      lines << " #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(__FILE__, __LINE__, #{arg[:name]}, cmock_size)\n"
+      lines << "void #{function[:name]}_CMockReturnMemThruPtr_#{arg[:name]}(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{arg[:type]} #{arg[:name]}, size_t cmock_size);\n"
     end
     lines
   end
@@ -59,11 +59,11 @@ class CMockGeneratorPluginReturnThruPtr
       arg_name = arg[:name]
       next unless @utils.ptr_or_str?(arg[:type]) && !(arg[:const?])
 
-      lines << "void #{func_name}_CMockReturnMemThruPtr_#{arg_name}(UNITY_LINE_TYPE cmock_line, #{arg[:type]} #{arg_name}, size_t cmock_size)\n"
+      lines << "void #{func_name}_CMockReturnMemThruPtr_#{arg_name}(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{arg[:type]} #{arg_name}, size_t cmock_size)\n"
       lines << "{\n"
       lines << "  CMOCK_#{func_name}_CALL_INSTANCE* cmock_call_instance = " \
                "(CMOCK_#{func_name}_CALL_INSTANCE*)CMock_Guts_GetAddressFor(CMock_Guts_MemEndOfChain(Mock.#{func_name}_CallInstance));\n"
-      lines << "  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_line, CMockStringPtrPreExp);\n"
+      lines << "  UNITY_TEST_ASSERT_NOT_NULL(cmock_call_instance, cmock_file, cmock_line, CMockStringPtrPreExp);\n"
       lines << "  cmock_call_instance->ReturnThruPtr_#{arg_name}_Used = 1;\n"
       lines << "  cmock_call_instance->ReturnThruPtr_#{arg_name}_Val = #{arg_name};\n"
       lines << "  cmock_call_instance->ReturnThruPtr_#{arg_name}_Size = cmock_size;\n"
@@ -80,7 +80,7 @@ class CMockGeneratorPluginReturnThruPtr
 
       lines << "  if (cmock_call_instance->ReturnThruPtr_#{arg_name}_Used)\n"
       lines << "  {\n"
-      lines << "    UNITY_TEST_ASSERT_NOT_NULL(#{arg_name}, cmock_line, CMockStringPtrIsNULL);\n"
+      lines << "    UNITY_TEST_ASSERT_NOT_NULL(#{arg_name}, cmock_file, cmock_line, CMockStringPtrIsNULL);\n"
       lines << "    CMock_memcpy((void*)#{arg_name}, (void*)cmock_call_instance->ReturnThruPtr_#{arg_name}_Val,\n"
       lines << "      cmock_call_instance->ReturnThruPtr_#{arg_name}_Size);\n"
       lines << "  }\n"

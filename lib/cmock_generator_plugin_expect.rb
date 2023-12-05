@@ -36,18 +36,18 @@ class CMockGeneratorPluginExpect
   def mock_function_declarations(function)
     if function[:args].empty?
       if function[:return][:void?]
-        "#define #{function[:name]}_Expect() #{function[:name]}_CMockExpect(__LINE__)\n" \
-               "void #{function[:name]}_CMockExpect(UNITY_LINE_TYPE cmock_line);\n"
+        "#define #{function[:name]}_Expect() #{function[:name]}_CMockExpect(__FILE__, __LINE__)\n" \
+               "void #{function[:name]}_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line);\n"
       else
-        "#define #{function[:name]}_ExpectAndReturn(cmock_retval) #{function[:name]}_CMockExpectAndReturn(__LINE__, cmock_retval)\n" \
-               "void #{function[:name]}_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, #{function[:return][:str]});\n"
+        "#define #{function[:name]}_ExpectAndReturn(cmock_retval) #{function[:name]}_CMockExpectAndReturn(__FILE__, __LINE__, cmock_retval)\n" \
+               "void #{function[:name]}_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:return][:str]});\n"
       end
     elsif function[:return][:void?]
-      "#define #{function[:name]}_Expect(#{function[:args_call]}) #{function[:name]}_CMockExpect(__LINE__, #{function[:args_call]})\n" \
-             "void #{function[:name]}_CMockExpect(UNITY_LINE_TYPE cmock_line, #{function[:args_string]});\n"
+      "#define #{function[:name]}_Expect(#{function[:args_call]}) #{function[:name]}_CMockExpect(__FILE__, __LINE__, #{function[:args_call]})\n" \
+             "void #{function[:name]}_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:args_string]});\n"
     else
-      "#define #{function[:name]}_ExpectAndReturn(#{function[:args_call]}, cmock_retval) #{function[:name]}_CMockExpectAndReturn(__LINE__, #{function[:args_call]}, cmock_retval)\n" \
-             "void #{function[:name]}_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, #{function[:args_string]}, #{function[:return][:str]});\n"
+      "#define #{function[:name]}_ExpectAndReturn(#{function[:args_call]}, cmock_retval) #{function[:name]}_CMockExpectAndReturn(__FILE__, __LINE__, #{function[:args_call]}, cmock_retval)\n" \
+             "void #{function[:name]}_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:args_string]}, #{function[:return][:str]});\n"
     end
   end
 
@@ -75,14 +75,14 @@ class CMockGeneratorPluginExpect
     func_name = function[:name]
     lines << if function[:return][:void?]
                if function[:args_string] == 'void'
-                 "void #{func_name}_CMockExpect(UNITY_LINE_TYPE cmock_line)\n{\n"
+                 "void #{func_name}_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line)\n{\n"
                else
-                 "void #{func_name}_CMockExpect(UNITY_LINE_TYPE cmock_line, #{function[:args_string]})\n{\n"
+                 "void #{func_name}_CMockExpect(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:args_string]})\n{\n"
                end
              elsif function[:args_string] == 'void'
-               "void #{func_name}_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, #{function[:return][:str]})\n{\n"
+               "void #{func_name}_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:return][:str]})\n{\n"
              else
-               "void #{func_name}_CMockExpectAndReturn(UNITY_LINE_TYPE cmock_line, #{function[:args_string]}, #{function[:return][:str]})\n{\n"
+               "void #{func_name}_CMockExpectAndReturn(const char* cmock_file, UNITY_LINE_TYPE cmock_line, #{function[:args_string]}, #{function[:return][:str]})\n{\n"
              end
     lines << @utils.code_add_base_expectation(func_name)
     lines << @utils.code_call_argument_loader(function)
@@ -94,7 +94,7 @@ class CMockGeneratorPluginExpect
     "  if (CMOCK_GUTS_NONE != call_instance)\n" \
     "  {\n" \
     "    UNITY_SET_DETAIL(CMockString_#{function[:name]});\n" \
-    "    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);\n" \
+    "    UNITY_TEST_FAIL(cmock_file, cmock_line, CMockStringCalledLess);\n" \
     "  }\n"
   end
 end
