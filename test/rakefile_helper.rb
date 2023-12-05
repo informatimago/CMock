@@ -11,6 +11,20 @@ require '../vendor/unity/auto/unity_test_summary'
 require '../vendor/unity/auto/colour_reporter.rb'
 require './system/systest_generator'
 
+# Monkeypatch the File Class with the exists? method
+unless Dir.respond_to?(:exists?)
+  class << Dir
+    alias_method :exists?, :exist?
+  end
+end
+
+# Monkeypatch the Dir Class with the exists? method
+unless File.respond_to?(:exists?)
+  class << File
+    alias_method :exists?, :exist?
+  end
+end
+
 module RakefileHelpers
 
   SYSTEST_GENERATED_FILES_PATH   = './system/generated/'
